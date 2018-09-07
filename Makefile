@@ -3,7 +3,8 @@ DOKKU_HOST:=breton.ch
 create: validate-app
 	git remote add ${NAME} dokku@${DOKKU_HOST}:${NAME}
 	git push ${NAME} master
-	ssh -t dokku@breton.ch proxy:ports-clear ${NAME}
+	ssh -t dokku@breton.ch config:set ${NAME} url=http://${NAME}.${DOKKU_HOST}
+	ssh -t dokku@breton.ch proxy:ports-remove ${NAME} http:2368:2368
 	ssh -t dokku@breton.ch proxy:ports-add ${NAME} http:80:2368
 
 destroy: validate-app
