@@ -65,8 +65,7 @@ Well, let's be old-fashioned and have a cosy `Makefile` there... you will be abl
 
 # Next ?
 
-1. add [let's encrypts](https://github.com/dokku/dokku-letsencrypt) for HTTPs support
 1. consider [backup](http://dokku.viewdocs.io/dokku~v0.12.12/advanced-usage/backup-recovery/) and/or [persistent storage](http://dokku.viewdocs.io/dokku~v0.12.12/advanced-usage/persistent-storage/) with Dokku
-1. apply this to wordpress (in order to play with a DB service)
-1. [push an image](http://dokku.viewdocs.io/dokku~v0.12.12/deployment/methods/images/) from docker hub
-1. Look at [offered monitoring](https://github.com/dokku/dokku-graphite-grafana)
+2. apply this to wordpress (in order to play with a DB service)
+3. [push an image](http://dokku.viewdocs.io/dokku~v0.12.12/deployment/methods/images/) from docker hub
+4. Look at [offered monitoring](https://github.com/dokku/dokku-graphite-grafana)

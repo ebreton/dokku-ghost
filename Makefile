@@ -1,14 +1,29 @@
 DOKKU_HOST:=breton.ch
+DOKKU_LETSENCRYPT_EMAIL:=manu@ibimus.com
+
+init-host:
+	# run once after setup of a new host
+	ssh -t dokku@breton.ch config:set --global DOKKU_LETSENCRYPT_EMAIL=${DOKKU_LETSENCRYPT_EMAIL}
 
 create: validate-app
+	# create an app and set environment variable+port before 1st deployment
+	ssh -t dokku@breton.ch apps:create ${NAME}
+	ssh -t dokku@breton.ch config:set ${NAME} url=https://${NAME}.${DOKKU_HOST}
+	ssh -t dokku@breton.ch proxy:ports-add ${NAME} http:80:2368
+	# add remote and push app to trigger deployment on host
 	git remote add ${NAME} dokku@${DOKKU_HOST}:${NAME}
 	git push ${NAME} master
-	ssh -t dokku@breton.ch config:set ${NAME} url=http://${NAME}.${DOKKU_HOST}
+	# remove unnecessary port
 	ssh -t dokku@breton.ch proxy:ports-remove ${NAME} http:2368:2368
-	ssh -t dokku@breton.ch proxy:ports-add ${NAME} http:80:2368
+	# switch to HTTPs
+	ssh -t dokku@breton.ch letsencrypt ${NAME}
+	# mount volume for images
+	ssh -t dokku@breton.ch storage:mount ${NAME} /var/lib/dokku/data/storage/${NAME}:/var/lib/ghost/content/images
+	ssh -t dokku@breton.ch ps:restart ${NAME}
 
 destroy: validate-app
 	ssh -t dokku@breton.ch apps:destroy ${NAME}
+	git remote remove ${NAME}
 
 apps:
 	ssh -t dokku@breton.ch apps:report ${NAME}
