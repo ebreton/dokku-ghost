@@ -1,9 +1,17 @@
 DOKKU_HOST:=breton.ch
 DOKKU_LETSENCRYPT_EMAIL:=manu@ibimus.com
 
+LOCAL_BACKUP_PATH:=~/var/dokku_backup
+
+###
+# ONE OFF
+
 init-host:
 	# run once after setup of a new host
 	ssh -t dokku@breton.ch config:set --global DOKKU_LETSENCRYPT_EMAIL=${DOKKU_LETSENCRYPT_EMAIL}
+
+###
+# CREATE & DESTROY
 
 create: validate-app
 	# create an app and set environment variable+port before 1st deployment
@@ -25,6 +33,9 @@ destroy: validate-app
 	ssh -t dokku@breton.ch apps:destroy ${NAME}
 	git remote remove ${NAME}
 
+###
+# MONITORING
+
 apps:
 	ssh -t dokku@breton.ch apps:report ${NAME}
 
@@ -33,6 +44,26 @@ domains:
 
 proxy:
 	ssh -t dokku@breton.ch proxy:report ${NAME}
+
+storage:
+	ssh -t dokku@breton.ch storage:report ${NAME}
+
+###
+# BACKUP & RESTORE
+
+backup-all:
+	[ -d $(LOCAL_BACKUP_PATH) ] || mkdir -p $(LOCAL_BACKUP_PATH)
+	rsync -av ${DOKKU_HOST}:/var/lib/dokku/data/storage/ ${LOCAL_BACKUP_PATH}
+
+backup: validate-app
+	[ -d $(LOCAL_BACKUP_PATH) ] || mkdir -p $(LOCAL_BACKUP_PATH)
+	rsync -av ${DOKKU_HOST}:/var/lib/dokku/data/storage/${NAME} ${LOCAL_BACKUP_PATH}/
+
+restore: validate-app
+	rsync -av ${LOCAL_BACKUP_PATH}/${NAME} ${DOKKU_HOST}:/var/lib/dokku/data/storage/
+
+###
+# INPUT VALIDATION
 
 validate-app:
 ifndef NAME
