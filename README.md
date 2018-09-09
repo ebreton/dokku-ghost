@@ -65,7 +65,6 @@ Well, let's be old-fashioned and have a cosy `Makefile` there... you will be abl
 
 # Next ?
 
-1. consider [backup](http://dokku.viewdocs.io/dokku~v0.12.12/advanced-usage/backup-recovery/) and/or [persistent storage](http://dokku.viewdocs.io/dokku~v0.12.12/advanced-usage/persistent-storage/) with Dokku
-2. apply this to wordpress (in order to play with a DB service)
-3. [push an image](http://dokku.viewdocs.io/dokku~v0.12.12/deployment/methods/images/) from docker hub
-4. Look at [offered monitoring](https://github.com/dokku/dokku-graphite-grafana)
+1. Follow up on https://github.com/dokku/dokku-graphite-grafana/issues/21
+1. Find a dashboard for the [offered monitoring](https://github.com/dokku/dokku-graphite-grafana)
+1. Check the [maintenance plugin](https://github.com/dokku/dokku-maintenance)

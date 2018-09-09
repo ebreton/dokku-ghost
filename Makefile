@@ -1,5 +1,6 @@
 DOKKU_HOST:=breton.ch
 DOKKU_LETSENCRYPT_EMAIL:=manu@ibimus.com
+DOKKU_GRAFANA_SERVICE:=grafana
 
 LOCAL_BACKUP_PATH:=~/var/dokku_backup
 
@@ -7,8 +8,15 @@ LOCAL_BACKUP_PATH:=~/var/dokku_backup
 # ONE OFF
 
 init-host:
-	# run once after setup of a new host
+	# set email to use for let's encrypt globally
+	# ! requires: sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
 	ssh -t dokku@breton.ch config:set --global DOKKU_LETSENCRYPT_EMAIL=${DOKKU_LETSENCRYPT_EMAIL}
+	# install monitoring
+	# ! requires: sudo dokku plugin:install https://github.com/dokku/dokku-graphite-grafana.git graphite
+	ssh -t dokku@breton.ch graphite:create ${DOKKU_GRAFANA_SERVICE}
+	ssh -t dokku@breton.ch graphite:nginx-expose ${DOKKU_GRAFANA_SERVICE} ${DOKKU_GRAFANA_SERVICE}.${DOKKU_HOST}
+	# ! connect with admin/admin and change password
+
 
 ###
 # CREATE & DESTROY
@@ -28,6 +36,8 @@ create: validate-app
 	# mount volume for images
 	ssh -t dokku@breton.ch storage:mount ${NAME} /var/lib/dokku/data/storage/${NAME}:/var/lib/ghost/content/images
 	ssh -t dokku@breton.ch ps:restart ${NAME}
+	# connect to grafana
+	ssh -t dokku@breton.ch graphite:link ${DOKKU_GRAFANA_SERVICE} ${NAME}
 
 destroy: validate-app
 	ssh -t dokku@breton.ch apps:destroy ${NAME}
