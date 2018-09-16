@@ -51,6 +51,9 @@ proxy:
 storage:
 	ssh -t dokku@${DOKKU_HOST} storage:report ${NAME}
 
+config: validate-app
+	ssh -t dokku@${DOKKU_HOST} config ${NAME}
+
 
 ###
 # BACKUP & RESTORE
