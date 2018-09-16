@@ -35,6 +35,7 @@ destroy: validate-app
 	ssh -t dokku@${DOKKU_HOST} apps:destroy ${NAME}
 	git remote remove ${NAME}
 
+
 ###
 # MONITORING
 
@@ -50,6 +51,7 @@ proxy:
 storage:
 	ssh -t dokku@${DOKKU_HOST} storage:report ${NAME}
 
+
 ###
 # BACKUP & RESTORE
 
@@ -63,6 +65,7 @@ backup: validate-app
 
 restore: validate-app
 	rsync -av ${LOCAL_BACKUP_PATH}/${NAME} ${DOKKU_HOST}:/var/lib/dokku/data/storage/
+
 
 ###
 # INPUT VALIDATION
